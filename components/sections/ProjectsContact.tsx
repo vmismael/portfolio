@@ -265,14 +265,6 @@ function ProjectCard({ project: p }: { project: typeof PROJECTS[number] }) {
               github
             </a>
           )}
-          {p.featured && (
-            <a
-              href="#"
-              className="font-mono text-[12px] text-accent inline-flex items-center gap-2 pb-px border-b border-accent"
-            >
-              ler case study →
-            </a>
-          )}
           {isPlaceholder && (
             <span className="font-mono text-[11px] text-muted">
               [ placeholder · adicionar depois ]
