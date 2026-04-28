@@ -1,10 +1,12 @@
 "use client";
+import { type ReactNode } from "react";
 import { motion, type HTMLMotionProps } from "framer-motion";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
 
-type FadeUpProps = HTMLMotionProps<"div"> & {
-  delay?: number;        // ms
-  distance?: number;     // px translateY
+type FadeUpProps = Omit<HTMLMotionProps<"div">, "children"> & {
+  children?: ReactNode;
+  delay?: number;
+  distance?: number;
   once?: boolean;
 };
 
