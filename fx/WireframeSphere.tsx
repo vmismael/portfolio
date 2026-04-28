@@ -73,10 +73,6 @@ export function WireframeSphere({ size = 520, className }: Props) {
     const aHex = accents[accent].c;
     const aSoftHex = accents[accent].soft;
     const inkLine = palette[theme].ruleStrong;
-    const bgHex = palette[theme].bg;
-    const bgR = parseInt(bgHex.slice(1, 3), 16);
-    const bgG = parseInt(bgHex.slice(3, 5), 16);
-    const bgB = parseInt(bgHex.slice(5, 7), 16);
 
     const mouse = { mx: 0, my: 0 };
     const onMove = (e: MouseEvent) => {
@@ -110,13 +106,7 @@ export function WireframeSphere({ size = 520, className }: Props) {
       const cx = size / 2, cy = size / 2;
       const R = size * 0.4;
 
-      // Occlude the grid behind the sphere so it reads as "in front"
-      ctx.fillStyle = `rgba(${bgR}, ${bgG}, ${bgB}, 0.82)`;
-      ctx.beginPath();
-      ctx.arc(cx, cy, R * 0.98, 0, Math.PI * 2);
-      ctx.fill();
-
-      let currentHex: string = aHex;
+let currentHex: string = aHex;
       let currentSoft: string = aSoftHex;
       if (accent === "wave") {
         const h = parseFloat(document.documentElement.style.getPropertyValue("--accent-h") || "0");

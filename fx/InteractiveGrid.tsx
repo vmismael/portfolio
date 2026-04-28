@@ -145,6 +145,24 @@ export function InteractiveGrid({ cellSize = 80, baseOpacity = 0.45, light = fal
         });
       });
 
+      // Erase grid inside the sphere and fade approaching lines.
+      // Sphere: right-[-60px], size=780, drawn radius R=780*0.4=312.
+      // Center in section canvas: X = w - (780/2 - 60) = w - 330, Y = h/2.
+      if (w >= 768) {
+        const sphX = w - 330;
+        const sphY = h / 2;
+        const innerR = 295; // fully erased core (R * 0.95)
+        const outerR = 420; // fade ends here   (R * 1.35)
+        const mask = ctx.createRadialGradient(sphX, sphY, innerR, sphX, sphY, outerR);
+        mask.addColorStop(0, "rgba(0,0,0,1)");
+        mask.addColorStop(1, "rgba(0,0,0,0)");
+        ctx.save();
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.fillStyle = mask;
+        ctx.fillRect(0, 0, w, h);
+        ctx.restore();
+      }
+
       raf = requestAnimationFrame(tick);
     };
     tick();
