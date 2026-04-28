@@ -1,0 +1,157 @@
+/* ============================================================
+   Design tokens — CSS custom properties.
+   Mirrors `tokens.ts`. Imported once in `app/globals.css`.
+
+   Theme switching:
+     <html data-theme="dark">     ← root attribute toggle
+     <html data-accent="amber">   ← accent override
+
+   Defaults: dark + terracotta.
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------- Fonts (Next.js: prefer next/font; fallback below) ---------------- */
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500&family=Newsreader:ital,wght@0,400;1,400&display=swap");
+
+:root,
+[data-theme="dark"] {
+  /* surfaces */
+  --bg:          #0A0F14;
+  --bg-alt:      #0F1620;
+  --panel:       #0D131A;
+  --rule:        #1C2630;
+  --rule-strong: #293646;
+  --rule-dashed: #1F2A36;
+
+  /* text */
+  --ink:      #F0F2F4;
+  --ink-hi:   #FFFFFF;
+  --body:     #B8C0CC;
+  --muted:    #6F7784;
+  --muted-hi: #90989F;
+
+  /* code colors (syntax-style accents) */
+  --code:      #E2E6EC;
+  --code-str:  #D7B475;
+  --code-key:  #7FB8C9;
+  --code-type: #9FC9D6;
+  --code-ok:   #88B074;
+}
+
+[data-theme="light"] {
+  --bg:          #FAFAF7;
+  --bg-alt:      #F2F1EC;
+  --panel:       #FFFFFF;
+  --rule:        #E6E4DC;
+  --rule-strong: #C9C5B5;
+  --rule-dashed: #D6D3C7;
+
+  --ink:      #0F2940;
+  --ink-hi:   #1B3A52;
+  --body:     #2E343C;
+  --muted:    #6B7079;
+  --muted-hi: #4A4F58;
+
+  --code:      #0F2940;
+  --code-str:  #9C5A2A;
+  --code-key:  #3D6E84;
+  --code-type: #1F5566;
+  --code-ok:   #5C7A4B;
+}
+
+/* ---------------- Accents (independent of theme) ---------------- */
+:root,
+[data-accent="terracotta"] {
+  --accent:          #B8552E;
+  --accent-soft:     #D88864;
+  --accent-contrast: #FFF8F2;
+}
+
+[data-accent="amber"] {
+  --accent:          #B8862E;
+  --accent-soft:     #D8A864;
+  --accent-contrast: #FFF8E8;
+}
+
+[data-accent="teal"] {
+  --accent:          #1B3A52;
+  --accent-soft:     #3D6E84;
+  --accent-contrast: #FAFAF7;
+}
+
+/* ---------------- Type / motion tokens ---------------- */
+:root {
+  --font-sans:  "Geist", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-mono:  "Geist Mono", ui-monospace, "JetBrains Mono", Menlo, monospace;
+  --font-serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+
+  --ease-standard: cubic-bezier(0.2, 0.6, 0.2, 1);
+  --dur-fast:  150ms;
+  --dur-base:  300ms;
+  --dur-slow:  500ms;
+
+  --section-pad: 96px;
+  --content-gap: 48px;
+  --card-pad:    24px;
+
+  --max-content: 1280px;
+  --nav-height:  56px;
+}
+
+/* Density modifiers */
+[data-density="compact"]     { --section-pad: 64px;  --content-gap: 32px; --card-pad: 18px; }
+[data-density="comfortable"] { --section-pad: 96px;  --content-gap: 48px; --card-pad: 24px; }
+[data-density="airy"]        { --section-pad: 128px; --content-gap: 64px; --card-pad: 32px; }
+
+/* ---------------- Base ---------------- */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--body);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color var(--dur-base) var(--ease-standard),
+              color var(--dur-base) var(--ease-standard);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+
+/* Focus ring — visible on keyboard nav, suppressed on mouse click */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* Reduce motion globally if user prefers */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------------- Status pulse keyframe (used by StatusPill, system_info) ---------------- */
+@keyframes status-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
+.status-pulse { animation: status-pulse 2s ease-in-out infinite; }
+
+/* ---------------- Caret blink (hero terminal) ---------------- */
+@keyframes caret-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.caret { animation: caret-blink 1s steps(2, end) infinite; }
