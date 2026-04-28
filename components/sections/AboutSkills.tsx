@@ -59,7 +59,7 @@ const ABOUT_BLOCKS = [
     eyebrow: "03 · o que estou construindo agora",
     body: (
       <>
-        Cursando <strong>Engenharia de Software na FIAP</strong> (2024–), foco
+        Cursando <strong>Engenharia de Software na FIAP</strong> (2024–27), foco
         em <strong>Python, análise de dados e automação</strong> aplicados a
         contextos financeiros e de saúde. O <strong>Labsync</strong> foi o
         primeiro experimento sério dessa intersecção — finalista do FIAP Next
@@ -73,7 +73,7 @@ const ABOUT_BLOCKS = [
 const TIMELINE: { period: string; Icon: LucideIcon; title: string; body: string }[] = [
   { period: "2019–22", Icon: Stethoscope, title: "Medicina (trancada)",      body: "UNINOVE + Cats Academy (Boston). Linguagem do setor saúde." },
   { period: "2022–23", Icon: TrendingUp,  title: "Administração (trancada)", body: "IBMEC + francês em Paris. Gestão financeira, controle, KPIs." },
-  { period: "2024–",   Icon: Code2,       title: "Eng. Software · FIAP",     body: "Python, dados, automação. Onde tudo se cruza." },
+  { period: "2024–27", Icon: Code2,       title: "Eng. Software · FIAP",     body: "Python, dados, automação. Onde tudo se cruza." },
   { period: "2025",    Icon: Sparkles,    title: "Labsync · FIAP Next",      body: "Finalista. Solução real para um problema vivido." },
   { period: "2025",    Icon: Briefcase,   title: "Lab. Paulista",            body: "Auxiliar administrativo: caixa, conferências, automação." },
 ];
