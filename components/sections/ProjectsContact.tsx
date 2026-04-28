@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { ExternalLink, Send, CheckCircle2, AlertCircle } from "lucide-react";
+import { ExternalLink, Send, CheckCircle2, AlertCircle, Copy, Check } from "lucide-react";
 import { FadeUp } from "@/components/ui/FadeUp";
 import { InteractiveGrid } from "@/fx/InteractiveGrid";
 import { cn } from "@/lib/cn";
@@ -314,6 +314,35 @@ export function Contact() {
   );
 }
 
+function CopyRow({ ch, isLast }: { ch: (typeof CHANNELS)[number]; isLast: boolean }) {
+  const [copied, setCopied] = useState(false);
+  const Icon = ch.icon;
+
+  function copy() {
+    navigator.clipboard.writeText(ch.val);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div
+      className="grid gap-3 items-center px-[18px] py-4 transition-colors duration-fast hover:bg-bg-alt [grid-template-columns:auto_1fr_auto] md:[grid-template-columns:auto_90px_1fr_auto]"
+      style={{ borderBottom: !isLast ? "1px dashed var(--rule-dashed)" : "none" }}
+    >
+      <Icon size={16} className="text-muted" />
+      <span className="font-mono text-[11px] text-muted uppercase tracking-[0.1em] hidden md:block">{ch.label}</span>
+      <span className="font-mono text-[12px] text-ink truncate">{ch.val}</span>
+      <button
+        onClick={copy}
+        aria-label="Copiar email"
+        className="w-6 h-6 inline-flex items-center justify-center text-muted hover:text-accent transition-colors duration-fast focus:outline-none focus-visible:ring-1 focus-visible:ring-accent flex-shrink-0"
+      >
+        {copied ? <Check size={13} className="text-code-ok" /> : <Copy size={13} />}
+      </button>
+    </div>
+  );
+}
+
 function ContactChannels() {
   return (
     <div className="border border-rule bg-panel mb-4">
@@ -322,6 +351,8 @@ function ContactChannels() {
         <span>{CHANNELS.length} entries</span>
       </div>
       {CHANNELS.map((ch, i) => {
+        const isLast = i === CHANNELS.length - 1;
+        if (ch.copyable) return <CopyRow key={ch.label} ch={ch} isLast={isLast} />;
         const Icon = ch.icon;
         return (
           <a
@@ -330,7 +361,7 @@ function ContactChannels() {
             target="_blank"
             rel="noopener noreferrer"
             className="grid gap-3 items-center px-[18px] py-4 text-body no-underline transition-colors duration-fast hover:bg-bg-alt [grid-template-columns:auto_1fr_auto] md:[grid-template-columns:auto_90px_1fr_auto]"
-            style={{ borderBottom: i < CHANNELS.length - 1 ? "1px dashed var(--rule-dashed)" : "none" }}
+            style={{ borderBottom: !isLast ? "1px dashed var(--rule-dashed)" : "none" }}
           >
             <Icon size={16} className="text-muted" />
             <span className="font-mono text-[11px] text-muted uppercase tracking-[0.1em] hidden md:block">{ch.label}</span>
