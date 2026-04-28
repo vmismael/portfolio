@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
-import { Mail, Linkedin, ExternalLink, MessageCircle, Send, CheckCircle2 } from "lucide-react";
+import { ExternalLink, Send, CheckCircle2, AlertCircle } from "lucide-react";
 import { FadeUp } from "@/components/ui/FadeUp";
 import { InteractiveGrid } from "@/fx/InteractiveGrid";
 import { cn } from "@/lib/cn";
-import type { LucideIcon } from "lucide-react";
+import { PROJECTS, type ThumbKey } from "@/data/projects";
+import { CHANNELS } from "@/data/contact";
+import type { Project } from "@/data/projects";
 
 function SectionHeader({ num, kicker, title, subtitle }: {
   num: string; kicker: string; title: string; subtitle?: string;
@@ -32,7 +34,7 @@ function SectionHeader({ num, kicker, title, subtitle }: {
 }
 
 /* ============================================================
-   PROJECT THUMBNAILS — geometric SVG, no fake screenshots
+   PROJECT THUMBNAILS
    ============================================================ */
 function ThumbLedger() {
   return (
@@ -88,46 +90,15 @@ function ThumbDots() {
   );
 }
 
+const THUMBS: Record<ThumbKey, () => React.JSX.Element> = {
+  ledger: ThumbLedger,
+  grid:   ThumbGrid,
+  dots:   ThumbDots,
+};
+
 /* ============================================================
    PROJECTS
    ============================================================ */
-const PROJECTS = [
-  {
-    id: "labsync",
-    featured: true,
-    title: "Labsync",
-    subtitle: "Finalista FIAP Next 2025",
-    description: "Aplicação em Python para consolidação financeira e conferência de caixa em laboratórios de análises clínicas. Automatiza o cruzamento de lançamentos diários, identifica divergências e gera relatórios consolidados — reduzindo o tempo da rotina administrativa e a margem de erro humano.",
-    stack: ["Python", "SQLite", "pandas", "openpyxl", "rich"],
-    github: "https://github.com/vmismael",
-    badge: "case study",
-    Thumb: ThumbLedger,
-  },
-  {
-    id: "portfolio",
-    featured: false,
-    title: "Portfólio Pessoal",
-    subtitle: "Esta página · v.2026",
-    description: "Aplicação Next.js com App Router, tema claro/escuro, animações Framer Motion e estética técnica-editorial. Tipografia Geist.",
-    stack: ["Next.js", "TypeScript", "Tailwind", "Framer Motion"],
-    github: "https://github.com/vmismael/portfolio",
-    badge: null,
-    Thumb: ThumbGrid,
-  },
-  {
-    id: "placeholder-3",
-    featured: false,
-    placeholder: true,
-    title: "Próximo projeto",
-    subtitle: "em construção",
-    description: "Espaço reservado para o próximo case — em breve um experimento com agentes autônomos / análise de dados em saúde.",
-    stack: ["Python", "LLM", "data"],
-    github: null,
-    badge: null,
-    Thumb: ThumbDots,
-  },
-] as const;
-
 export function Projects() {
   return (
     <section
@@ -162,10 +133,10 @@ export function Projects() {
   );
 }
 
-function ProjectCard({ project: p }: { project: typeof PROJECTS[number] }) {
+function ProjectCard({ project: p }: { project: Project }) {
   const [hover, setHover] = useState(false);
-  const isPlaceholder = "placeholder" in p && p.placeholder;
-  const Thumb = p.Thumb;
+  const isPlaceholder = !!p.placeholder;
+  const Thumb = THUMBS[p.thumb];
 
   return (
     <article
@@ -183,9 +154,7 @@ function ProjectCard({ project: p }: { project: typeof PROJECTS[number] }) {
       }}
     >
       {/* Header bar */}
-      <div
-        className="absolute top-0 left-0 right-0 h-8 px-4 flex items-center justify-between font-mono text-[10px] text-muted border-b border-rule bg-bg-alt z-10 uppercase tracking-[0.12em]"
-      >
+      <div className="absolute top-0 left-0 right-0 h-8 px-4 flex items-center justify-between font-mono text-[10px] text-muted border-b border-rule bg-bg-alt z-10 uppercase tracking-[0.12em]">
         <div className="flex items-center gap-2.5">
           <span className="opacity-50">◻</span>
           {p.id}.md
@@ -280,13 +249,6 @@ function ProjectCard({ project: p }: { project: typeof PROJECTS[number] }) {
    CONTACT
    ============================================================ */
 type ContactVariant = "channels" | "form" | "hybrid";
-
-const CHANNELS: { icon: LucideIcon; label: string; val: string; href: string }[] = [
-  { icon: Mail,          label: "Email",    val: "vitor.montemor.ismael@gmail.com", href: "mailto:vitor.montemor.ismael@gmail.com" },
-  { icon: Linkedin,      label: "LinkedIn", val: "/in/vitormontemorismael",          href: "https://linkedin.com/in/vitormontemorismael/" },
-  { icon: MessageCircle, label: "WhatsApp", val: "+55 (19) 98105-7925",              href: "https://wa.me/5519981057925" },
-  { icon: ExternalLink,  label: "GitHub",   val: "github.com/vmismael",              href: "https://github.com/vmismael" },
-];
 
 export function Contact() {
   const [variant, setVariant] = useState<ContactVariant>("hybrid");
@@ -387,7 +349,7 @@ type FormErrors = Partial<FormState>;
 function ContactForm() {
   const [form, setForm] = useState<FormState>({ name: "", email: "", subject: "", message: "" });
   const [errors, setErrors] = useState<FormErrors>({});
-  const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
 
   function validate(): FormErrors {
     const e: FormErrors = {};
@@ -415,9 +377,27 @@ function ContactForm() {
       setStatus("success");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch {
-      setStatus("idle");
-      setErrors({ message: "Falha ao enviar. Tente novamente." });
+      setStatus("error");
     }
+  }
+
+  if (status === "error") {
+    return (
+      <div className="border border-accent bg-panel p-8 flex flex-col items-center gap-3 text-center">
+        <AlertCircle size={32} className="text-accent" />
+        <p className="font-sans text-[16px] text-ink m-0">Falha ao enviar.</p>
+        <p className="font-mono text-[12px] text-muted m-0">
+          Tente pelo <a href="mailto:vitor.montemor.ismael@gmail.com" className="text-accent underline underline-offset-2">email direto</a> ou{" "}
+          <a href="https://wa.me/5519981057925" target="_blank" rel="noopener noreferrer" className="text-accent underline underline-offset-2">WhatsApp</a>.
+        </p>
+        <button
+          onClick={() => setStatus("idle")}
+          className="mt-2 border border-rule text-body font-mono text-[12px] px-4 py-2 hover:border-accent hover:text-accent transition-colors duration-fast cursor-pointer bg-transparent"
+        >
+          tentar novamente
+        </button>
+      </div>
+    );
   }
 
   if (status === "success") {
@@ -504,9 +484,7 @@ function Field({
         onChange={(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => onChange(e.target.value)}
         placeholder={placeholder}
         className="w-full box-border px-3.5 py-3 font-mono text-[13px] text-ink bg-bg transition-colors duration-fast focus:outline-none resize-y"
-        style={{
-          border: `1px solid ${error ? "var(--accent)" : "var(--rule)"}`,
-        }}
+        style={{ border: `1px solid ${error ? "var(--accent)" : "var(--rule)"}` }}
         onFocus={(e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
           e.currentTarget.style.borderColor = "var(--accent)";
         }}

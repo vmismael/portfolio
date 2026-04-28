@@ -155,3 +155,20 @@ html, body {
   50%, 100% { opacity: 0; }
 }
 .caret { animation: caret-blink 1s steps(2, end) infinite; }
+
+/* ---------------- MDX prose (blog posts) ---------------- */
+.mdx-prose { font-family: var(--font-sans); color: var(--body); font-size: 16px; line-height: 1.75; }
+.mdx-prose h2 { font-size: clamp(20px, 3vw, 26px); font-weight: 600; color: var(--ink); margin: 2.5rem 0 1rem; letter-spacing: -0.02em; line-height: 1.2; }
+.mdx-prose h3 { font-size: 18px; font-weight: 600; color: var(--ink); margin: 2rem 0 0.75rem; }
+.mdx-prose p { margin: 0 0 1.4rem; }
+.mdx-prose ul, .mdx-prose ol { margin: 0 0 1.4rem 1.25rem; padding: 0; }
+.mdx-prose li { margin-bottom: 0.35rem; }
+.mdx-prose strong { color: var(--ink); font-weight: 600; }
+.mdx-prose em { font-style: italic; color: var(--muted-hi, var(--body)); }
+.mdx-prose a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.mdx-prose a:hover { opacity: 0.8; }
+.mdx-prose code { font-family: var(--font-mono); font-size: 0.85em; background: var(--bg-alt); border: 1px solid var(--rule); padding: 0.15em 0.4em; color: var(--code); }
+.mdx-prose pre { background: var(--bg-alt); border: 1px solid var(--rule); padding: 1.25rem 1.5rem; overflow-x: auto; margin: 0 0 1.6rem; }
+.mdx-prose pre code { background: none; border: none; padding: 0; font-size: 13px; line-height: 1.65; color: var(--code); }
+.mdx-prose blockquote { border-left: 2px solid var(--accent); padding-left: 1.25rem; margin: 0 0 1.4rem; color: var(--muted); font-style: italic; }
+.mdx-prose hr { border: none; border-top: 1px solid var(--rule); margin: 2.5rem 0; }
