@@ -1,0 +1,68 @@
+---
+title: "Construindo um portfolio técnico com Next.js 15"
+date: "2026-04-01"
+description: "As decisões de design e arquitetura por trás deste portfolio — tema CSS sem re-render, animações e a stack que escolhi."
+tags: ["nextjs", "typescript", "design"]
+---
+
+## Por que refazer
+
+O portfolio anterior era um HTML estático — funcional, mas sem profundidade. Queria algo que demonstrasse stack moderna e refletisse uma estética que faz sentido para mim: técnica, editorial, sem ornamentos desnecessários.
+
+A referência visual foi IDEs e terminais. Fundo escuro, tipografia mono, cores de status. A sensação de que o site é uma interface de trabalho, não um cartão de visita.
+
+## Tema sem JavaScript no servidor
+
+A troca dark/light usa apenas CSS custom properties no atributo `data-theme` do `<html>`. O `ThemeProvider` atualiza o atributo no cliente, sem re-render de componentes e sem flash na hidratação.
+
+```css
+[data-theme="dark"] {
+  --bg: #0A0F14;
+  --ink: #F0F2F4;
+  --accent: #B8552E;
+}
+
+[data-theme="light"] {
+  --bg: #FAFAF7;
+  --ink: #0F2940;
+  --accent: #B8552E;
+}
+```
+
+O mesmo padrão vale para os três acentos de cor (terracota, amber, teal) — apenas CSS, zero JavaScript extra.
+
+## Animações com Framer Motion
+
+Usei `whileInView` com `once: true` em vez de `IntersectionObserver` manual. O componente `<FadeUp>` verifica `prefers-reduced-motion` — se o usuário preferiu menos movimento, recebe o layout estático sem nenhuma transição.
+
+```tsx
+export function FadeUp({ delay = 0, children, ...rest }: FadeUpProps) {
+  const reduced = useReducedMotion();
+  if (reduced) return <div {...rest}>{children}</div>;
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: delay / 1000 }}
+      {...rest}
+    >
+      {children}
+    </motion.div>
+  );
+}
+```
+
+## Canvas 2D sem Three.js
+
+A esfera wireframe e o grid interativo são Canvas 2D puro — sem WebGL, sem Three.js. Funciona em qualquer browser, incluindo Safari iOS.
+
+A esfera usa distribuição de Fibonacci para posicionar 110 pontos uniformemente na superfície e projeta com perspectiva simples. O grid reage ao cursor calculando a distância de cada célula ao ponteiro a cada frame.
+
+Duas dependências a menos, zero diferença visual para o usuário.
+
+## Stack final
+
+`Next.js 15` · `TypeScript` · `Tailwind CSS` · `Framer Motion` · `Resend`
+
+O código está em [github.com/vmismael/portfolio](https://github.com/vmismael/portfolio).

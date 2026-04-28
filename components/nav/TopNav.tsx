@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTheme } from "@/hooks/useTheme";
@@ -26,6 +27,8 @@ const ACCENTS: { name: AccentName; color: string }[] = [
 export function TopNav() {
   const { theme, accent, toggleTheme, setAccent } = useTheme();
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const isHome = pathname === "/";
   const activeId = useActiveSection(SECTION_IDS);
 
   return (
@@ -37,17 +40,17 @@ export function TopNav() {
       )}
     >
       <nav className="max-w-content mx-auto h-full px-5 md:px-8 flex items-center justify-between">
-        <Link href="#hero" className="text-ink font-semibold">VMI</Link>
+        <Link href={isHome ? "#hero" : "/"} className="text-ink font-semibold">VMI</Link>
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-7">
           {NAV.map(n => (
             <Link
               key={n.href}
-              href={n.href}
+              href={isHome ? n.href : `/${n.href}`}
               className={cn(
                 "transition-colors duration-fast",
-                activeId === n.id
+                isHome && activeId === n.id
                   ? "text-accent"
                   : "text-muted hover:text-accent",
               )}
@@ -118,11 +121,11 @@ export function TopNav() {
               {NAV.map(n => (
                 <li key={n.href}>
                   <Link
-                    href={n.href}
+                    href={isHome ? n.href : `/${n.href}`}
                     onClick={() => setOpen(false)}
                     className={cn(
                       "block py-1 transition-colors duration-fast",
-                      activeId === n.id
+                      isHome && activeId === n.id
                         ? "text-accent"
                         : "text-muted hover:text-accent",
                     )}
