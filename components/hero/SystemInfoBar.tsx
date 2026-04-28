@@ -4,7 +4,7 @@
  */
 const ITEMS = [
   ["loc",    "São Paulo · BR"],
-  ["edu",    "FIAP · Eng. Software"],
+  ["edu",    "FIAP · Eng. Software · 2027"],
   ["bg",     "Lab. clínico · admin"],
   ["lang",   "PT · EN(C1) · ES(B2)"],
   ["stack",  "Python · TS · React · SQL"],
