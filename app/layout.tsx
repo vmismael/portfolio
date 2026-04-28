@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" data-theme="dark" suppressHydrationWarning>
       <body>
-        <ThemeProvider defaultTheme="dark" defaultAccent="terracotta" defaultDensity="comfortable">
+        <ThemeProvider defaultTheme="dark" defaultAccent="wave" defaultDensity="comfortable">
           {children}
         </ThemeProvider>
         <Analytics />

@@ -59,6 +59,13 @@ export function InteractiveGrid({ cellSize = 80, baseOpacity = 0.45, light = fal
       const m = h.replace("#", "");
       return [parseInt(m.slice(0, 2), 16), parseInt(m.slice(2, 4), 16), parseInt(m.slice(4, 6), 16)];
     };
+    const hslToRgb = (hDeg: number, s: number, l: number): [number, number, number] => {
+      s /= 100; l /= 100;
+      const k = (n: number) => (n + hDeg / 30) % 12;
+      const a = s * Math.min(l, 1 - l);
+      const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+      return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+    };
     const aRGB = hex(accents[accent].c);
     const baseLine = palette[theme].rule;
 
@@ -114,16 +121,23 @@ export function InteractiveGrid({ cellSize = 80, baseOpacity = 0.45, light = fal
       ctx.restore();
 
       // Lit cells
+      const currentRGB: [number, number, number] = accent === "wave"
+        ? hslToRgb(
+            parseFloat(document.documentElement.style.getPropertyValue("--accent-h") || "0"),
+            parseFloat(document.documentElement.style.getPropertyValue("--accent-s") || "62"),
+            parseFloat(document.documentElement.style.getPropertyValue("--accent-l") || "46"),
+          )
+        : aRGB;
       lit.forEach((i, key) => {
         const [cx, cy] = key.split(",").map(Number);
         const x = cx * cellSize, y = cy * cellSize;
-        ctx.fillStyle = `rgba(${aRGB[0]},${aRGB[1]},${aRGB[2]},${i * fillAlpha})`;
+        ctx.fillStyle = `rgba(${currentRGB[0]},${currentRGB[1]},${currentRGB[2]},${i * fillAlpha})`;
         ctx.fillRect(x, y, cellSize, cellSize);
-        ctx.strokeStyle = `rgba(${aRGB[0]},${aRGB[1]},${aRGB[2]},${i * edgeAlpha})`;
+        ctx.strokeStyle = `rgba(${currentRGB[0]},${currentRGB[1]},${currentRGB[2]},${i * edgeAlpha})`;
         ctx.lineWidth = 1;
         ctx.strokeRect(x + 0.5, y + 0.5, cellSize, cellSize);
         const dotR = 1 + i * 1.4;
-        ctx.fillStyle = `rgba(${aRGB[0]},${aRGB[1]},${aRGB[2]},${i * 0.75})`;
+        ctx.fillStyle = `rgba(${currentRGB[0]},${currentRGB[1]},${currentRGB[2]},${i * 0.75})`;
         [[x, y], [x + cellSize, y], [x, y + cellSize], [x + cellSize, y + cellSize]].forEach(([px, py]) => {
           ctx.beginPath();
           ctx.arc(px, py, dotR, 0, Math.PI * 2);

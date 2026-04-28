@@ -50,6 +50,7 @@ export const accents = {
   terracotta: { c: "#B8552E", soft: "#D88864", contrast: "#FFF8F2" },
   amber:      { c: "#B8862E", soft: "#D8A864", contrast: "#FFF8E8" },
   teal:       { c: "#1B3A52", soft: "#3D6E84", contrast: "#FAFAF7" },
+  wave:       { c: "#B8552E", soft: "#D88864", contrast: "#FFFFFF" }, // JS overrides via inline style
 } as const;
 
 export type AccentName = keyof typeof accents;

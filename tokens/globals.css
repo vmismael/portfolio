@@ -82,6 +82,13 @@
   --accent-contrast: #FAFAF7;
 }
 
+/* wave: JS animation overrides these via inline style — this is the SSR fallback */
+[data-accent="wave"] {
+  --accent:          #B8552E;
+  --accent-soft:     #D88864;
+  --accent-contrast: #FFFFFF;
+}
+
 /* ---------------- Type / motion tokens ---------------- */
 :root {
   --font-sans:  "Geist", system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;

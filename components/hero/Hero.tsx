@@ -84,7 +84,7 @@ export function Hero() {
       {/* Layer 0b: 3D sphere — right half, decorative */}
       <div
         aria-hidden
-        className="absolute right-[-140px] top-1/2 -translate-y-1/2 hidden md:block z-0 opacity-90"
+        className="absolute right-[-60px] top-1/2 -translate-y-1/2 hidden md:block z-[1] opacity-90"
       >
         <WireframeSphere size={780} />
       </div>

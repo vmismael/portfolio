@@ -73,6 +73,10 @@ export function WireframeSphere({ size = 520, className }: Props) {
     const aHex = accents[accent].c;
     const aSoftHex = accents[accent].soft;
     const inkLine = palette[theme].ruleStrong;
+    const bgHex = palette[theme].bg;
+    const bgR = parseInt(bgHex.slice(1, 3), 16);
+    const bgG = parseInt(bgHex.slice(3, 5), 16);
+    const bgB = parseInt(bgHex.slice(5, 7), 16);
 
     const mouse = { mx: 0, my: 0 };
     const onMove = (e: MouseEvent) => {
@@ -106,6 +110,22 @@ export function WireframeSphere({ size = 520, className }: Props) {
       const cx = size / 2, cy = size / 2;
       const R = size * 0.4;
 
+      // Occlude the grid behind the sphere so it reads as "in front"
+      ctx.fillStyle = `rgba(${bgR}, ${bgG}, ${bgB}, 0.82)`;
+      ctx.beginPath();
+      ctx.arc(cx, cy, R * 0.98, 0, Math.PI * 2);
+      ctx.fill();
+
+      let currentHex = aHex;
+      let currentSoft = aSoftHex;
+      if (accent === "wave") {
+        const h = parseFloat(document.documentElement.style.getPropertyValue("--accent-h") || "0");
+        const ws = parseFloat(document.documentElement.style.getPropertyValue("--accent-s") || "62");
+        const wl = parseFloat(document.documentElement.style.getPropertyValue("--accent-l") || "46");
+        currentHex  = `hsl(${h}, ${ws}%, ${wl}%)`;
+        currentSoft = `hsl(${h}, ${Math.round(ws * 0.8)}%, ${Math.round(wl + 16)}%)`;
+      }
+
       const proj = points.map(p => project(p, yaw, tilt));
 
       // Great circles (behind)
@@ -131,7 +151,7 @@ export function WireframeSphere({ size = 520, className }: Props) {
         const pa = proj[a], pb = proj[b];
         const avgZ = (pa.z + pb.z) / 2;
         const alpha = (avgZ + 1) / 2 * 0.5 + 0.05;
-        ctx.strokeStyle = avgZ > 0 ? aHex : aSoftHex;
+        ctx.strokeStyle = avgZ > 0 ? currentHex : currentSoft;
         ctx.globalAlpha = alpha;
         ctx.beginPath();
         ctx.moveTo(cx + pa.x * R, cy + pa.y * R);
@@ -146,13 +166,13 @@ export function WireframeSphere({ size = 520, className }: Props) {
         const py = cy + p.y * R;
         const front = (p.z + 1) / 2;
         const r = 1 + front * 2.2;
-        ctx.fillStyle = aHex;
+        ctx.fillStyle = currentHex;
         ctx.globalAlpha = 0.3 + front * 0.6;
         ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
         // Glow on front-hemi points
         if (p.z > 0.2) {
           const grad = ctx.createRadialGradient(px, py, 0, px, py, 8);
-          grad.addColorStop(0, aHex);
+          grad.addColorStop(0, currentHex);
           grad.addColorStop(1, "rgba(0,0,0,0)");
           ctx.fillStyle = grad;
           ctx.globalAlpha = 0.25 * front;
