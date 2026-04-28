@@ -34,11 +34,11 @@ const ABOUT_BLOCKS = [
     eyebrow: "01 · de onde venho",
     body: (
       <>
-        Comecei na <strong>Medicina (UNINOVE)</strong>, depois migrei para{" "}
-        <strong>Administração no IBMEC</strong> com extensão em finanças. Em
-        ambas, encontrei pedaços do que queria, mas não o todo. O que essas
-        passagens me deram foi vocabulário: aprendi a <em>ler</em> uma operação
-        de saúde por dentro e a tratar números com a seriedade que eles pedem.
+        Comecei na <strong>Medicina</strong>, na UNINOVE. Depois migrei pra{" "}
+        <strong>Administração no IBMEC</strong>. Em cada uma encontrei pedaços
+        do que eu queria, mas nunca o todo. O que essas passagens deixaram foi
+        vocabulário: aprendi a ler uma operação de saúde por dentro e a tratar
+        número com a seriedade que ele pede.
       </>
     ),
   },
@@ -46,11 +46,11 @@ const ABOUT_BLOCKS = [
     eyebrow: "02 · por que essa trajetória vira vantagem",
     body: (
       <>
-        Trabalhei em <strong>laboratório de análises clínicas</strong> com
-        rotina financeira: caixa, conciliação, planilhas, apoio em automação.
-        Não preciso que me expliquem por que uma divergência de R$ 18 entre o
-        sistema e a bancada importa, ou por que um relatório precisa rodar
-        antes das 8h. Resolver software no setor de saúde/finanças é mais
+        Trabalhei em <strong>laboratório de análises clínicas</strong> na rotina
+        financeira — caixa, conciliação, planilhas, apoio em automação. Não
+        preciso que me expliquem por que uma divergência de R$ 18 entre o
+        sistema e a bancada importa, ou por que um relatório precisa rodar antes
+        das oito da manhã. Construir software pra saúde e finanças fica mais
         rápido quando você já fez o trabalho que o software vai substituir.
       </>
     ),
@@ -59,12 +59,13 @@ const ABOUT_BLOCKS = [
     eyebrow: "03 · o que estou construindo agora",
     body: (
       <>
-        Cursando <strong>Engenharia de Software na FIAP</strong> (2024–27), foco
-        em <strong>Python, análise de dados e automação</strong> aplicados a
-        contextos financeiros e de saúde. O <strong>Labsync</strong> foi o
-        primeiro experimento sério dessa intersecção — finalista do FIAP Next
-        2025. Procuro vagas júnior, trainee ou estágio em healthtech, fintech
-        ou empresas com forte componente de operação.
+        Cursando <strong>Engenharia de Software na FIAP</strong>, formando em
+        2027. Foco em <strong>Python, análise de dados e automação</strong>{" "}
+        aplicados a contextos financeiros e de saúde. O{" "}
+        <strong>Labsync</strong> foi o primeiro experimento sério nessa
+        interseção — finalista do FIAP Next 2025. Procuro vagas júnior,
+        trainee ou estágio em healthtech, fintech ou empresas com forte
+        componente operacional.
       </>
     ),
   },
