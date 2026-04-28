@@ -267,7 +267,7 @@ function ProjectCard({ project: p }: { project: typeof PROJECTS[number] }) {
           )}
           {isPlaceholder && (
             <span className="font-mono text-[11px] text-muted">
-              [ placeholder · adicionar depois ]
+              [ placeholder ]
             </span>
           )}
         </div>
