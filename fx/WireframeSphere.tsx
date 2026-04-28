@@ -116,8 +116,8 @@ export function WireframeSphere({ size = 520, className }: Props) {
       ctx.arc(cx, cy, R * 0.98, 0, Math.PI * 2);
       ctx.fill();
 
-      let currentHex = aHex;
-      let currentSoft = aSoftHex;
+      let currentHex: string = aHex;
+      let currentSoft: string = aSoftHex;
       if (accent === "wave") {
         const h = parseFloat(document.documentElement.style.getPropertyValue("--accent-h") || "0");
         const ws = parseFloat(document.documentElement.style.getPropertyValue("--accent-s") || "62");
