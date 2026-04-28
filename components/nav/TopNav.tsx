@@ -18,10 +18,11 @@ const NAV = [
 
 const SECTION_IDS = ["hero", "sobre", "habilidades", "projetos", "contato"];
 
-const ACCENTS: { name: AccentName; color: string }[] = [
+const ACCENTS: { name: AccentName; color: string; conic?: boolean }[] = [
   { name: "terracotta", color: "#B8552E" },
   { name: "amber",      color: "#B8862E" },
   { name: "teal",       color: "#3D6E84" },
+  { name: "wave",       color: "conic-gradient(from 0deg, #f87171, #fb923c, #facc15, #4ade80, #38bdf8, #818cf8, #e879f9, #f87171)", conic: true },
 ];
 
 export function TopNav() {
@@ -72,7 +73,9 @@ export function TopNav() {
                 style={{
                   background: a.color,
                   boxShadow: accent === a.name
-                    ? `0 0 0 1.5px var(--bg), 0 0 0 3px ${a.color}`
+                    ? a.conic
+                      ? "0 0 0 1.5px var(--bg), 0 0 0 3px #b87be0"
+                      : `0 0 0 1.5px var(--bg), 0 0 0 3px ${a.color}`
                     : "none",
                   opacity: accent === a.name ? 1 : 0.5,
                 }}

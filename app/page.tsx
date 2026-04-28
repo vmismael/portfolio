@@ -11,6 +11,7 @@ export default function Home() {
       <TopNav />
       <main>
         <Hero />
+        <div className="border-t border-rule" />
         <About />
         <Skills />
         <Projects />
