@@ -1,3 +1,14 @@
+function getAge() {
+  const birth = new Date(2001, 6, 1); // Jul 1 2001
+  const now = new Date();
+  let age = now.getFullYear() - birth.getFullYear();
+  if (
+    now.getMonth() < birth.getMonth() ||
+    (now.getMonth() === birth.getMonth() && now.getDate() < birth.getDate())
+  ) age--;
+  return age;
+}
+
 /**
  * Horizontal system_info bar shown below the Hero buttons.
  * Glassmorphic — backdrop-blur lets the WireframeSphere bleed through.
@@ -38,7 +49,7 @@ export function SystemInfoBar() {
 
       <span className="ml-auto inline-flex items-center gap-1.5 text-micro text-code-ok border-l border-rule pl-4">
         <span className="w-1.5 h-1.5 rounded-full bg-code-ok status-pulse" />
-        uptime: 2y · build OK
+        uptime: {getAge()}y · build OK
       </span>
     </div>
   );
