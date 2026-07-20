@@ -1,8 +1,9 @@
 "use client";
-import { useState } from "react";
-import { ExternalLink, Send, CheckCircle2, AlertCircle, Copy, Check } from "lucide-react";
+import { useState, useRef, useCallback, useEffect } from "react";
+import { ExternalLink, Send, CheckCircle2, AlertCircle, Copy, Check, ChevronLeft, ChevronRight } from "lucide-react";
 import { FadeUp } from "@/components/ui/FadeUp";
 import { InteractiveGrid } from "@/fx/InteractiveGrid";
+import { useReducedMotion } from "@/hooks/useReducedMotion";
 import { cn } from "@/lib/cn";
 import { PROJECTS, type ThumbKey } from "@/data/projects";
 import { CHANNELS } from "@/data/contact";
@@ -90,16 +91,74 @@ function ThumbDots() {
   );
 }
 
+function ThumbHelix() {
+  const N = 64;
+  const x0 = 20, x1 = 380, amp = 52, cy = 100, turns = 4;
+  const xAt = (i: number) => x0 + (x1 - x0) * (i / N);
+  const tAt = (i: number) => (i / N) * Math.PI * turns;
+  const yA = (i: number) => cy + amp * Math.sin(tAt(i));
+  const yB = (i: number) => cy - amp * Math.sin(tAt(i));
+  const line = (fy: (i: number) => number) =>
+    Array.from({ length: N + 1 }, (_, i) => `${xAt(i).toFixed(1)},${fy(i).toFixed(1)}`).join(" ");
+  return (
+    <svg viewBox="0 0 400 200" style={{ width: "100%", height: "100%", display: "block" }} preserveAspectRatio="none">
+      <rect width="400" height="200" fill="var(--bg)" />
+      {Array.from({ length: N + 1 }, (_, i) =>
+        i % 4 === 0 ? (
+          <line key={i} x1={xAt(i)} y1={yA(i)} x2={xAt(i)} y2={yB(i)} stroke="var(--rule-strong)" strokeWidth="0.6" opacity="0.7" />
+        ) : null,
+      )}
+      <polyline points={line(yA)} fill="none" stroke="var(--ink)" strokeWidth="1.4" opacity="0.55" />
+      <polyline points={line(yB)} fill="none" stroke="var(--accent)" strokeWidth="1.4" opacity="0.8" />
+      <text x="20" y="14" fontFamily="ui-monospace,monospace" fontSize="8" fill="var(--ink)" opacity="0.4">
+        helix · 650 exames
+      </text>
+    </svg>
+  );
+}
+
+function ThumbToolkit() {
+  const cols = 7, rows = 3, bw = 44, bh = 44, gap = 8, startX = 20, startY = 24;
+  const accents = new Set([2, 6, 9, 15, 18]);
+  const tiles = [];
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      const idx = r * cols + c;
+      const x = startX + c * (bw + gap);
+      const y = startY + r * (bh + gap);
+      const on = accents.has(idx);
+      tiles.push(
+        <g key={idx}>
+          <rect x={x} y={y} width={bw} height={bh} fill={on ? "var(--accent)" : "var(--rule)"} opacity={on ? 0.18 : 0.5} stroke={on ? "var(--accent)" : "var(--rule-strong)"} strokeWidth="1" />
+          <rect x={x + 10} y={y + 14} width={bw - 20} height="2.5" fill={on ? "var(--accent)" : "var(--ink)"} opacity={on ? 0.7 : 0.3} />
+          <rect x={x + 10} y={y + 22} width={bw - 26} height="2.5" fill="var(--ink)" opacity="0.25" />
+        </g>,
+      );
+    }
+  }
+  return (
+    <svg viewBox="0 0 400 200" style={{ width: "100%", height: "100%", display: "block" }} preserveAspectRatio="none">
+      <rect width="400" height="200" fill="var(--bg)" />
+      {tiles}
+    </svg>
+  );
+}
+
 const THUMBS: Record<ThumbKey, () => React.JSX.Element> = {
-  ledger: ThumbLedger,
-  grid:   ThumbGrid,
-  dots:   ThumbDots,
+  ledger:  ThumbLedger,
+  grid:    ThumbGrid,
+  dots:    ThumbDots,
+  helix:   ThumbHelix,
+  toolkit: ThumbToolkit,
 };
 
 /* ============================================================
    PROJECTS
    ============================================================ */
 export function Projects() {
+  const featured = PROJECTS.filter(p => p.featured);
+  const rest = PROJECTS.filter(p => !p.featured);
+
   return (
     <section
       id="projetos"
@@ -117,19 +176,148 @@ export function Projects() {
           />
         </FadeUp>
 
-        <div className="mt-14 grid md:grid-cols-2 gap-6">
-          {PROJECTS.map((p, i) => (
-            <FadeUp
-              key={p.id}
-              delay={i * 80}
-              style={p.featured ? { gridColumn: "1 / -1" } : undefined}
-            >
-              <ProjectCard project={p} />
-            </FadeUp>
-          ))}
-        </div>
+        {featured.map((p, i) => (
+          <FadeUp key={p.id} delay={i * 80} className="mt-14">
+            <ProjectCard project={p} />
+          </FadeUp>
+        ))}
+
+        {rest.length > 0 && (
+          <FadeUp delay={120} className="mt-6">
+            <ProjectCarousel projects={rest} />
+          </FadeUp>
+        )}
       </div>
     </section>
+  );
+}
+
+/* ============================================================
+   PROJECT CAROUSEL
+   ============================================================ */
+function ProjectCarousel({ projects }: { projects: Project[] }) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const [edges, setEdges] = useState({ start: true, end: false });
+
+  const syncState = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const { scrollLeft, clientWidth, scrollWidth } = track;
+    const cards = Array.from(track.children) as HTMLElement[];
+    // Active = card whose left edge is closest to the current scroll position.
+    let nearest = 0;
+    let min = Infinity;
+    cards.forEach((c, i) => {
+      const d = Math.abs(c.offsetLeft - track.offsetLeft - scrollLeft);
+      if (d < min) { min = d; nearest = i; }
+    });
+    setActive(nearest);
+    setEdges({
+      start: scrollLeft <= 1,
+      end: scrollLeft + clientWidth >= scrollWidth - 1,
+    });
+  }, []);
+
+  useEffect(() => {
+    syncState();
+    const track = trackRef.current;
+    if (!track) return;
+    track.addEventListener("scroll", syncState, { passive: true });
+    window.addEventListener("resize", syncState);
+    return () => {
+      track.removeEventListener("scroll", syncState);
+      window.removeEventListener("resize", syncState);
+    };
+  }, [syncState]);
+
+  const goTo = useCallback((i: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const clamped = Math.max(0, Math.min(i, projects.length - 1));
+    const card = track.children[clamped] as HTMLElement | undefined;
+    if (!card) return;
+    track.scrollTo({
+      left: card.offsetLeft - track.offsetLeft,
+      behavior: reduced ? "auto" : "smooth",
+    });
+  }, [projects.length, reduced]);
+
+  const canPrev = !edges.start;
+  const canNext = !edges.end;
+
+  return (
+    <div
+      role="group"
+      aria-roledescription="carrossel"
+      aria-label="Outros projetos"
+      onKeyDown={(e) => {
+        if (e.key === "ArrowRight") { e.preventDefault(); goTo(active + 1); }
+        if (e.key === "ArrowLeft") { e.preventDefault(); goTo(active - 1); }
+      }}
+    >
+      {/* Controls */}
+      <div className="flex items-center justify-between mb-4">
+        <div className="font-mono text-[11px] text-muted tracking-[0.08em]">
+          <span className="text-accent">{String(active + 1).padStart(2, "0")}</span>
+          <span className="opacity-50"> / {String(projects.length).padStart(2, "0")}</span>
+        </div>
+        <div className="flex gap-2">
+          <CarouselButton dir="prev" disabled={!canPrev} onClick={() => goTo(active - 1)} />
+          <CarouselButton dir="next" disabled={!canNext} onClick={() => goTo(active + 1)} />
+        </div>
+      </div>
+
+      {/* Track */}
+      <div
+        ref={trackRef}
+        className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-2 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {projects.map((p) => (
+          <div
+            key={p.id}
+            className="snap-start shrink-0 w-full sm:w-[calc(50%-12px)] lg:w-[calc(50%-12px)]"
+          >
+            <ProjectCard project={p} />
+          </div>
+        ))}
+      </div>
+
+      {/* Dots */}
+      <div className="flex justify-center gap-2 mt-4">
+        {projects.map((p, i) => (
+          <button
+            key={p.id}
+            onClick={() => goTo(i)}
+            aria-label={`Ir para projeto ${i + 1}: ${p.title}`}
+            aria-current={active === i}
+            className="h-1.5 rounded-full transition-all duration-base cursor-pointer focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+            style={{
+              width: active === i ? 24 : 8,
+              background: active === i ? "var(--accent)" : "var(--rule-strong)",
+            }}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function CarouselButton({ dir, disabled, onClick }: {
+  dir: "prev" | "next"; disabled: boolean; onClick: () => void;
+}) {
+  const Icon = dir === "prev" ? ChevronLeft : ChevronRight;
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={dir === "prev" ? "Projeto anterior" : "Próximo projeto"}
+      className="w-9 h-9 inline-flex items-center justify-center border transition-colors duration-fast cursor-pointer disabled:cursor-not-allowed disabled:opacity-30 enabled:hover:border-accent enabled:hover:text-accent focus:outline-none focus-visible:ring-1 focus-visible:ring-accent"
+      style={{ borderColor: "var(--rule)", color: "var(--body)" }}
+    >
+      <Icon size={16} />
+    </button>
   );
 }
 
@@ -224,6 +412,17 @@ function ProjectCard({ project: p }: { project: Project }) {
         </div>
 
         <div className="flex gap-3.5 mt-auto pt-2 items-center">
+          {p.live && (
+            <a
+              href={p.live}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[12px] text-accent inline-flex items-center gap-1.5 pb-px border-b border-rule transition-colors duration-fast hover:border-accent"
+            >
+              visitar
+              <ExternalLink size={12} />
+            </a>
+          )}
           {p.github && (
             <a
               href={p.github}
