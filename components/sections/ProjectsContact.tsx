@@ -391,7 +391,7 @@ function ProjectCard({ project: p }: { project: Project }) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       className={cn(
-        "relative border bg-panel overflow-hidden transition-[border-color,transform,box-shadow] duration-base flex flex-col",
+        "relative border bg-panel overflow-hidden transition-[border-color,transform,box-shadow] duration-base flex flex-col h-full",
         p.featured && "md:flex-row",
       )}
       style={{

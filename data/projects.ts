@@ -64,7 +64,7 @@ export const PROJECTS: Project[] = [
     id: "colaboradores",
     title: "Portal Colaboradores",
     subtitle: "Ferramenta interna · Lab Paulista",
-    description: "Hub interno que reúne as ferramentas operacionais do Laboratório Paulista, organizadas por setor (financeiro, RH, operações, laboratorial e clínico). A partir do upload de planilhas, automatiza rotinas de escritório: conciliação de extratos e PIX, indicadores de DRE, análise de ponto e vale-alimentação, mapeamento de riscos e produtividade de coletas. Interface config-driven com busca global, tabelas com destaque e dashboards. Acesso restrito à equipe.",
+    description: "Hub interno que reúne as ferramentas operacionais do Laboratório Paulista por setor (financeiro, RH, operações, laboratorial e clínico). A partir de planilhas, automatiza rotinas como conciliação de extratos e PIX, DRE, ponto e mapeamento de riscos. Acesso restrito à equipe.",
     stack: ["Next.js 15", "React 19", "Tailwind v4", "Radix UI", "SheetJS"],
     github: null,
     live: null,
