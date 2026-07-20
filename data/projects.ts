@@ -51,7 +51,7 @@ export const PROJECTS: Project[] = [
   },
   {
     id: "in1",
-    title: "ALLIN1",
+    title: "IN1",
     subtitle: "in1.services · SaaS de ferramentas",
     description: "SaaS gratuito que reúne dezenas de ferramentas utilitárias (PDF, imagem, vídeo, texto, web) rápidas e otimizadas para SEO. Processamento client-first — a maioria roda inteiramente no navegador, sem upload. Engine config-driven: cada ferramenta nasce de um registry, com metadata, sitemap e JSON-LD gerados automaticamente.",
     stack: ["Next.js 16", "React 19", "Tailwind v4", "Supabase", "SEO"],
