@@ -1,4 +1,4 @@
-export type ThumbKey = "ledger" | "grid" | "dots" | "helix" | "toolkit";
+export type ThumbKey = "ledger" | "grid" | "dots" | "helix" | "toolkit" | "circuit" | "sector";
 
 export type Project = {
   id: string;
@@ -39,6 +39,17 @@ export const PROJECTS: Project[] = [
     thumb: "helix",
   },
   {
+    id: "ford-intelligence",
+    title: "Ford Intelligence",
+    subtitle: "App mobile · React Native + Expo",
+    description: "App multiplataforma de fidelização do pós-venda Ford: IA preditiva de manutenção, telemetria IoT simulada (OBD2), visualização 3D do veículo com three.js, agendamento leva-e-traz e carteira de cashback. Segmentado em três planos SaaS (Agro, Urban, Premium). Frontend mobile com Expo Router e estado global em Zustand.",
+    stack: ["React Native", "Expo", "TypeScript", "three.js", "Zustand"],
+    github: "https://github.com/vmismael/Cyber-Sprint-Ford",
+    live: null,
+    badge: null,
+    thumb: "circuit",
+  },
+  {
     id: "in1",
     title: "ALLIN1",
     subtitle: "in1.services · SaaS de ferramentas",
@@ -48,6 +59,17 @@ export const PROJECTS: Project[] = [
     live: "https://in1.services",
     badge: null,
     thumb: "toolkit",
+  },
+  {
+    id: "colaboradores",
+    title: "Portal Colaboradores",
+    subtitle: "Ferramenta interna · Lab Paulista",
+    description: "Portal interno que unifica as ferramentas do Laboratório Paulista num único hub, com busca e navegação por setor (financeiro, RH, operações, laboratorial, clínico). Substitui quatro apps Streamlit separados. Processa planilhas Excel/CSV e gera dashboards. Acesso restrito à equipe.",
+    stack: ["Next.js 15", "React 19", "Tailwind v4", "Radix UI", "SheetJS"],
+    github: null,
+    live: null,
+    badge: "interno",
+    thumb: "sector",
   },
   {
     id: "portfolio",

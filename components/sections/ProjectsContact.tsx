@@ -144,12 +144,72 @@ function ThumbToolkit() {
   );
 }
 
+function ThumbCircuit() {
+  const nodes = [
+    [60, 50], [150, 40], [250, 70], [340, 45],
+    [40, 120], [130, 150], [230, 140], [320, 160], [370, 110],
+    [90, 100], [200, 100], [290, 100],
+  ];
+  const edges: [number, number][] = [
+    [0, 1], [1, 2], [2, 3], [0, 9], [9, 10], [10, 11], [11, 3],
+    [4, 5], [5, 6], [6, 7], [7, 8], [4, 9], [5, 10], [6, 11], [8, 3],
+    [9, 1], [10, 2], [11, 8],
+  ];
+  const accent = new Set([2, 10, 6]);
+  return (
+    <svg viewBox="0 0 400 200" style={{ width: "100%", height: "100%", display: "block" }} preserveAspectRatio="none">
+      <rect width="400" height="200" fill="var(--bg)" />
+      {edges.map(([a, b], i) => (
+        <line key={i} x1={nodes[a][0]} y1={nodes[a][1]} x2={nodes[b][0]} y2={nodes[b][1]} stroke="var(--rule-strong)" strokeWidth="0.7" opacity="0.6" />
+      ))}
+      {nodes.map(([x, y], i) => {
+        const on = accent.has(i);
+        return (
+          <g key={i}>
+            {on && <circle cx={x} cy={y} r="7" fill="var(--accent)" opacity="0.15" />}
+            <circle cx={x} cy={y} r={on ? 3 : 2} fill={on ? "var(--accent)" : "var(--ink)"} opacity={on ? 0.9 : 0.45} />
+          </g>
+        );
+      })}
+      <text x="20" y="188" fontFamily="ui-monospace,monospace" fontSize="8" fill="var(--ink)" opacity="0.4">
+        telemetry · obd2
+      </text>
+    </svg>
+  );
+}
+
+function ThumbSector() {
+  const panels = [
+    { x: 20, y: 24, w: 150, h: 74, accent: true },
+    { x: 178, y: 24, w: 90, h: 74 },
+    { x: 276, y: 24, w: 104, h: 74 },
+    { x: 20, y: 106, w: 104, h: 70 },
+    { x: 132, y: 106, w: 136, h: 70, accent: true },
+    { x: 276, y: 106, w: 104, h: 70 },
+  ];
+  return (
+    <svg viewBox="0 0 400 200" style={{ width: "100%", height: "100%", display: "block" }} preserveAspectRatio="none">
+      <rect width="400" height="200" fill="var(--bg)" />
+      {panels.map((p, i) => (
+        <g key={i}>
+          <rect x={p.x} y={p.y} width={p.w} height={p.h} fill={p.accent ? "var(--accent)" : "var(--rule)"} opacity={p.accent ? 0.12 : 0.4} stroke={p.accent ? "var(--accent)" : "var(--rule-strong)"} strokeWidth="1" />
+          <rect x={p.x + 10} y={p.y + 12} width={p.w * 0.5} height="3" fill={p.accent ? "var(--accent)" : "var(--ink)"} opacity={p.accent ? 0.7 : 0.35} />
+          <rect x={p.x + 10} y={p.y + 22} width={p.w * 0.7} height="2" fill="var(--ink)" opacity="0.22" />
+          <rect x={p.x + 10} y={p.y + 30} width={p.w * 0.35} height="2" fill="var(--ink)" opacity="0.22" />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
 const THUMBS: Record<ThumbKey, () => React.JSX.Element> = {
   ledger:  ThumbLedger,
   grid:    ThumbGrid,
   dots:    ThumbDots,
   helix:   ThumbHelix,
   toolkit: ThumbToolkit,
+  circuit: ThumbCircuit,
+  sector:  ThumbSector,
 };
 
 /* ============================================================
@@ -436,6 +496,11 @@ function ProjectCard({ project: p }: { project: Project }) {
           {isPlaceholder && (
             <span className="font-mono text-[11px] text-muted">
               [ placeholder ]
+            </span>
+          )}
+          {!isPlaceholder && !p.live && !p.github && (
+            <span className="font-mono text-[11px] text-muted">
+              [ acesso restrito ]
             </span>
           )}
         </div>
